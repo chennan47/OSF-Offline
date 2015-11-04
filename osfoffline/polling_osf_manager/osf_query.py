@@ -260,7 +260,7 @@ class OSFQuery(object):
             )
         except (
                 aiohttp.errors.ClientTimeoutError, aiohttp.errors.ClientConnectionError,
-                concurrent.futures._base.TimeoutError):
+                aiohttp.errors.ClientResponseError, concurrent.futures._base.TimeoutError):
             # internally, if a timeout occurs, aiohttp tries up to 3 times. thus we already technically have retries in.
             AlertHandler.warn("Bad Internet Connection")
             raise
