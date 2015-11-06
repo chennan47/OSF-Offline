@@ -107,7 +107,8 @@ class RemoteFile(RemoteFileFolder):
         # self.hash = remote_dict['metadata']['extra']['hash']
         # self.rented = remote_dict['metadata']['extra']['rented']
         self.size = remote_dict['attributes']['size']
-        # self.last_modified = remote_to_local_datetime(remote_dict['attributes']['date_modified'])
+        self.last_modified = remote_to_local_datetime(remote_dict['attributes']['last_touched']) \
+            if remote_dict['attributes']['last_touched'] else None
         # #todo: IS THIS ON ACTUAL SERVER YET? Chris said it would be up there soon.
         # self._write_privileges = 'POST' in remote_dict['links']['self_methods']
 

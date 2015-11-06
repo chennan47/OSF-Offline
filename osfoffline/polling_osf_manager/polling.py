@@ -690,9 +690,8 @@ class Poll(object):
         # thus cannot accurately determine when file/folder was renamed.
         # thus, going to have to go with local is pretty much always newer.
         # todo: based on above note, I think it is a better idea to go with the .locally_renamed idea.
-        if isinstance(remote, RemoteFileFolder):
-            remote_time = yield from remote.last_modified(local.node.osf_id, self.osf_query)
-        else:
+        remote_time = None
+        if isinstance(remote, RemoteFile):
             remote_time = remote.last_modified
 
         return local_time, remote_time
@@ -707,6 +706,8 @@ class Poll(object):
         try:
 
             local_time, remote_time = yield from self._get_local_remote_times(local, remote)
+            if not remote_time:
+                return True
             return local_time > remote_time
         except iso8601.ParseError:
             if isinstance(remote, RemoteFile):
