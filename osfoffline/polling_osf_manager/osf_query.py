@@ -257,8 +257,11 @@ class OSFQuery(object):
         )
         try:
             response = yield from asyncio.wait_for(request, timeout)
+        except RuntimeError:
+            request.cancel()
         finally:
             self.throttler.release()
+
 
         if expects:
             if response.status not in expects:
