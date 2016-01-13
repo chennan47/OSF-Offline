@@ -54,6 +54,7 @@ def start():
 
     while not connection:
         connection = check_connections()
+        logger.exception('No Internet connections.')
         time.sleep(60)
 
     if not OSFOfflineQT(app).start():
