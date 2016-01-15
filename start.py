@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import logging
-import netifaces
 import sys
 import signal
 import time
+import urllib
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMessageBox
@@ -27,11 +27,15 @@ def running_warning():
     warn_app.quit()
 
 
-def check_connections():
-    if bool(netifaces.gateways()['default']):
-        return True
+def check_connections(has_connection=False):
+    try:
+        urllib.urlopen("http://www.google.com")
+    except urllib.URLError:
+        logger.infoe('Internet is down')
     else:
-        return False
+        logger.info("Internet is up and running.")
+        has_connection = True
+    return has_connection
 
 
 def start():
@@ -42,7 +46,6 @@ def start():
     if '--drop' in sys.argv:
         drop_db()
 
-    connection = False
 
     app = QApplication(sys.argv)
 
@@ -52,10 +55,7 @@ def start():
 
     QApplication.setQuitOnLastWindowClosed(False)
 
-    while not connection:
-        connection = check_connections()
-        logger.exception('No Internet connections.')
-        time.sleep(60)
+    has_connection = check_connections()
 
     if not OSFOfflineQT(app).start():
         return sys.exit(1)
